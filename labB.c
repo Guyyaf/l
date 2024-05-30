@@ -47,6 +47,14 @@ virus* readVirus(FILE *file) {
     return outputVirus;
 }
 
+void printVirus(virus* v) {
+    printf("Virus Name: %s\n", v->virusName);
+    printf("Virus Signature Size: %d\n", v->SigSize);
+    printf("Virus Signature: ");
+    for (int i = 0; i < v->SigSize; ++i) {printf("%X ", v->sig[i]);}
+    printf("\n");
+}
+
 int main(int argc, char **argv){
     FILE *file = fopen(argv[1], "rb");
     if (file == NULL){
