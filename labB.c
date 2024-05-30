@@ -55,6 +55,47 @@ void printVirus(virus* v) {
     printf("\n");
 }
 
+////////////////////////////////////////////////////Part 1.b/////////////////////////////////////////////////////////////////////////////////////
+
+typedef struct link link;
+
+struct link {
+link *nextVirus;
+virus *vir;
+}; 
+
+link* list_append(link* virus_list, virus* data) {
+    link* newLink = (link*)malloc(sizeof(link));
+    newLink->vir = data;
+    newLink->nextVirus = virus_list;  
+    return newLink;
+}
+
+void list_print(link *virus_list, FILE *file) {
+    link current = virus_list[0];
+    while(current.nextVirus != NULL) {
+        printVirus2(&current, file);
+        current = *current.nextVirus;
+    }
+}
+
+void printVirus2(virus* v, FILE *file) {
+    fprintf("Name: %s\n", v->virusName, file);
+    fprintf("Signature Size: %d\n", v->SigSize, file);
+    fprintf("Signature: ", file);
+    for (int i = 0; i < v->SigSize; ++i) {fprintf("%X ", v->sig[i], file);}
+    fprintf("\n", file);
+}
+
+void list_free(link *virus_list) {
+    if (virus_list != NULL){
+        list_free(virus_list->nextVirus);
+        free(virus_list->vir->sig);  
+        free(virus_list->vir);       
+        free(virus_list);    
+    }     
+}
+
 int main(int argc, char **argv){
     FILE *file = fopen("signatures-L", "rb");
     if (file == NULL) {
