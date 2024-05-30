@@ -59,19 +59,18 @@ int main(int argc, char **argv){
     FILE *file = fopen("signatures.bin", "rb");
     if (file == NULL) {
         perror("Error opening signatures file");
-        return 1;
+        exit(1);
     }
-    char magicNumber[5];
+    char magicNumber[4];
     if (fread(magicNumber, sizeof(char), 4, file) != 4) {
         fprintf(stderr, "Error reading magic number\n");
         fclose(file);
-        return 1;
-    }
-    magicNumber[4] = '\0';  
-    if (strcmp(magicNumber, "VIRL") != 0 && strcmp(magicNumber, "VIRB") != 0) {
+         exit(1);
+    } 
+    if (magicNumber[0]=='V' && magicNumber[1]=='I' && magicNumber[2]=='R' && ((magicNumber[3]=='L')|| (magicNumber[4]=='B')) ) {
         fprintf(stderr, "Invalid magic number in signatures file\n");
         fclose(file);
-        return 1;
+        exit(1);
     }
     while (!feof(file)) {
         virus *v = readVirus(file);

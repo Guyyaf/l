@@ -4,7 +4,7 @@ labb: labb.o
 labb.o: labB.c 
 	gcc -g -Wall -m32 -c -o labb.o labB.c 
 
-.PHONY: clean 
+.PHONY: clean 1
 
 clean:
 	rm -f *.o labb
