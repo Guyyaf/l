@@ -16,10 +16,10 @@ void PrintHex(unsigned char *buffer, int length){
 }
 
 void SetSigFileName() {
-    printf("Enter a new file name");
+    printf("Enter a new file name \n");
     char input[200];
     fgets(input, sizeof(input), stdin);
-    input[strcspn(input, "\n")] = '\0';
+    input[strcspn(input, "\n")] = '\0'; //makes end of string - gpt
     if(rename("signatures-L",  input) != 0){
         exit(1);
     }
