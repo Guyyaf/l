@@ -26,7 +26,7 @@ void SetSigFileName() {
 }
 
 virus* readVirus(FILE *file) {
-    virus outputVirus = (virus)malloc(sizeof(virus));
+    virus* outputVirus = (virus*)malloc(sizeof(virus));
     if (fread(outputVirus->SigSize, sizeof(short), 1, file) != 1) {
         fprintf(stderr, "Error reading SigSize\n");
         free(outputVirus);
