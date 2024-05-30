@@ -80,49 +80,11 @@ int main(int argc, char **argv){
 
     // Magic number is OK, proceed to read viruses
     while (!feof(file)) {
-        virus *v = (virus*)malloc(sizeof(virus));
-        if (v == NULL) {
-            fprintf(stderr, "Memory allocation failed for virus\n");
-            fclose(file);
-            return 1;
-        }
-
-        // Read virus data
-        if (fread(&(v->SigSize), sizeof(unsigned short), 1, file) != 1) {
-            fprintf(stderr, "Error reading signature size\n");
-            free(v);
-            fclose(file);
-            return 1;
-        }
-
-        if (fread(v->virusName, sizeof(char), 16, file) != 16) {
-            fprintf(stderr, "Error reading virus name\n");
-            free(v);
-            fclose(file);
-            return 1;
-        }
-
-        v->sig = (unsigned char*)malloc(v->SigSize);
-        if (v->sig == NULL) {
-            fprintf(stderr, "Memory allocation failed for signature\n");
-            free(v);
-            fclose(file);
-            return 1;
-        }
-
-        if (fread(v->sig, 1, v->SigSize, file) != v->SigSize) {
-            fprintf(stderr, "Error reading signature\n");
-            free(v->sig);
-            free(v);
-            fclose(file);
-            return 1;
-        }
-
+        virus *v = readVirus(file);
         printVirus(v);
         free(v->sig);
         free(v);
     }
-
     fclose(file);
     return 0;
 }
