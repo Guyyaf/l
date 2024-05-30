@@ -27,7 +27,7 @@ void SetSigFileName() {
 
 virus* readVirus(FILE *file) {
     virus* outputVirus = (virus*)malloc(sizeof(virus));
-    if (fread(outputVirus->SigSize, sizeof(short), 1, file) != 1) {
+    if (fread(&outputVirus->SigSize, sizeof(short), 1, file) != 1) {
         fprintf(stderr, "Error reading SigSize\n");
         free(outputVirus);
         exit(1);
@@ -48,37 +48,31 @@ virus* readVirus(FILE *file) {
 }
 
 void printVirus(virus* v) {
-    printf("Virus Name: %s\n", v->virusName);
-    printf("Virus Signature Size: %d\n", v->SigSize);
-    printf("Virus Signature: ");
+    printf("Name: %s\n", v->virusName);
+    printf("Signature Size: %d\n", v->SigSize);
+    printf("Signature: ");
     for (int i = 0; i < v->SigSize; ++i) {printf("%X ", v->sig[i]);}
     printf("\n");
 }
 
 int main(int argc, char **argv){
-     FILE *file = fopen("signatures.bin", "rb");
+    FILE *file = fopen("signatures.bin", "rb");
     if (file == NULL) {
         perror("Error opening signatures file");
         return 1;
     }
-
-    // Read magic number
     char magicNumber[5];
     if (fread(magicNumber, sizeof(char), 4, file) != 4) {
         fprintf(stderr, "Error reading magic number\n");
         fclose(file);
         return 1;
     }
-    magicNumber[4] = '\0';  // Null-terminate the string
-
-    // Check magic number
+    magicNumber[4] = '\0';  
     if (strcmp(magicNumber, "VIRL") != 0 && strcmp(magicNumber, "VIRB") != 0) {
         fprintf(stderr, "Invalid magic number in signatures file\n");
         fclose(file);
         return 1;
     }
-
-    // Magic number is OK, proceed to read viruses
     while (!feof(file)) {
         virus *v = readVirus(file);
         printVirus(v);
