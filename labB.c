@@ -72,10 +72,10 @@ link* list_append(link* virus_list, virus* data) {
 }
 
 void list_print(link *virus_list, FILE *file) {
-    link current = virus_list[0];
-    while(current.nextVirus != NULL) {
-        printVirus2(&current, file);
-        current = *current.nextVirus;
+    link *current = virus_list;
+    while(current != NULL) {
+        printVirus2(current, file);
+        current = current->nextVirus;
     }
 }
 
