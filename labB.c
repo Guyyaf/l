@@ -56,16 +56,73 @@ void printVirus(virus* v) {
 }
 
 int main(int argc, char **argv){
-    FILE *file = fopen(argv[1], "rb");
-    if (file == NULL){
-        perror("Error opening file");
-        exit(1);
+     FILE *file = fopen("signatures.bin", "rb");
+    if (file == NULL) {
+        perror("Error opening signatures file");
+        return 1;
     }
-    unsigned char buffer[100];  
-    size_t bytesRead;
-    while ((bytesRead = fread(buffer, 1, sizeof(buffer), file)) > 0){
-        PrintHex(buffer, bytesRead);
+
+    // Read magic number
+    char magicNumber[5];
+    if (fread(magicNumber, sizeof(char), 4, file) != 4) {
+        fprintf(stderr, "Error reading magic number\n");
+        fclose(file);
+        return 1;
     }
+    magicNumber[4] = '\0';  // Null-terminate the string
+
+    // Check magic number
+    if (strcmp(magicNumber, "VIRL") != 0 && strcmp(magicNumber, "VIRB") != 0) {
+        fprintf(stderr, "Invalid magic number in signatures file\n");
+        fclose(file);
+        return 1;
+    }
+
+    // Magic number is OK, proceed to read viruses
+    while (!feof(file)) {
+        virus *v = (virus*)malloc(sizeof(virus));
+        if (v == NULL) {
+            fprintf(stderr, "Memory allocation failed for virus\n");
+            fclose(file);
+            return 1;
+        }
+
+        // Read virus data
+        if (fread(&(v->SigSize), sizeof(unsigned short), 1, file) != 1) {
+            fprintf(stderr, "Error reading signature size\n");
+            free(v);
+            fclose(file);
+            return 1;
+        }
+
+        if (fread(v->virusName, sizeof(char), 16, file) != 16) {
+            fprintf(stderr, "Error reading virus name\n");
+            free(v);
+            fclose(file);
+            return 1;
+        }
+
+        v->sig = (unsigned char*)malloc(v->SigSize);
+        if (v->sig == NULL) {
+            fprintf(stderr, "Memory allocation failed for signature\n");
+            free(v);
+            fclose(file);
+            return 1;
+        }
+
+        if (fread(v->sig, 1, v->SigSize, file) != v->SigSize) {
+            fprintf(stderr, "Error reading signature\n");
+            free(v->sig);
+            free(v);
+            fclose(file);
+            return 1;
+        }
+
+        printVirus(v);
+        free(v->sig);
+        free(v);
+    }
+
     fclose(file);
     return 0;
 }
