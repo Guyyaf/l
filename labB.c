@@ -56,7 +56,7 @@ void printVirus(virus* v) {
 }
 
 int main(int argc, char **argv){
-    FILE *file = fopen("signatures.bin", "rb");
+    FILE *file = fopen("signatures-L", "rb");
     if (file == NULL) {
         perror("Error opening signatures file");
         exit(1);
@@ -67,7 +67,7 @@ int main(int argc, char **argv){
         fclose(file);
          exit(1);
     } 
-    if (magicNumber[0]=='V' && magicNumber[1]=='I' && magicNumber[2]=='R' && ((magicNumber[3]=='L')|| (magicNumber[4]=='B')) ) {
+    if (magicNumber[0]!='V' || magicNumber[1]!='I' || magicNumber[2]!='R' || ((magicNumber[3]!='L') && (magicNumber[4]!='B')) ) {
         fprintf(stderr, "Invalid magic number in signatures file\n");
         fclose(file);
         exit(1);
