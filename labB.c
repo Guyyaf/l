@@ -20,9 +20,10 @@ void SetSigFileName() {
     char input[200];
     fgets(input, sizeof(input), stdin);
     input[strcspn(input, "\n")] = '\0'; //makes end of string - gpt
-    if(rename("signatures-L",  input) != 0){
+    if(rename(filename,  input) != 0){
         exit(1);
     }
+    filename = input;
 }
 
 virus* readVirus(FILE *file) {
@@ -96,16 +97,15 @@ void list_free(link *virus_list) {
     }     
 }
 
-link* loadSignatures(link *virus_list, FILE *file) {
+void loadSignatures() {
     link *newLink = virus_list;
     while (!feof(file)) {
         virus *v = readVirus(file);
         newLink = list_append(virus_list, v);
     }
-    return newLink;
 }
 
-void printSignatures(link *virus_list){
+void printSignatures(){
     link *current = virus_list;
     while(current!=NULL){
         printVirus(current);
@@ -127,7 +127,7 @@ void quit() {
 
 struct fun_desc {
     char *name;
-    char (*fun)();
+    void (*fun)();
 };
 
 struct fun_desc menu[] = { { "Set signatures file name", SetSigFileName}, { "Load signatures", loadSignatures}, { "Print signatures", printSignatures }, { "Detect viruses", detectViruses}, { "Fix file", fixFile }, { "Quit", quit}, { NULL, NULL} };
@@ -144,6 +144,7 @@ void printMenu(){
 //Global Variables
  FILE *file;
  link *virus_list;
+ char *filename;
 
 int main(int argc, char **argv){
    file = fopen("signatures-L", "rb");
