@@ -77,20 +77,20 @@ link* list_append(link* virus_list, virus* data) {
     return newLink;
 }
 
+void printVirus2(virus* v, FILE *file) {
+    fprintf(file, "Name: %s\n", v->virusName);
+    fprintf(file, "Signature Size: %d\n", v->SigSize);
+    fprintf(file, "Signature: ");
+    for (int i = 0; i < v->SigSize; ++i) {fprintf(file, "%X ", v->sig[i]);}
+    fprintf(file, "\n");
+}
+
 void list_print(link *virus_list, FILE *file) {
     link *current = virus_list;
     while(current != NULL) {
-        printVirus2(current, file);
+        printVirus2(current->vir, file);
         current = current->nextVirus;
     }
-}
-
-void printVirus2(virus* v, FILE *file) {
-    fprintf("Name: %s\n", v->virusName, file);
-    fprintf("Signature Size: %d\n", v->SigSize, file);
-    fprintf("Signature: ", file);
-    for (int i = 0; i < v->SigSize; ++i) {fprintf("%X ", v->sig[i], file);}
-    fprintf("\n", file);
 }
 
 void list_free(link *virus_list) {
