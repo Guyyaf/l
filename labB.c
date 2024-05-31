@@ -17,6 +17,7 @@ virus *vir;
 
 //Global Variables
  FILE *file;
+ //do we need to add the user's filename?
  link *virus_list;
  char *filename;
 
@@ -32,30 +33,31 @@ void SetSigFileName() {
     char input[200];
     fgets(input, sizeof(input), stdin);
     input[strcspn(input, "\n")] = '\0'; //makes end of string - gpt
+    printf("prev filename: %s \n", filename);
     if(rename(filename,  input) != 0){
         exit(1);
     }
-    filename = input;
+    filename = input; 
 }
 
 virus* readVirus(FILE *rfile) {
     virus* outputVirus = (virus*)malloc(sizeof(virus));
-    if (fread(&outputVirus->SigSize, sizeof(short), 1, rfile) != 1) {
-        fprintf(stderr, "Error reading SigSize\n");
+   if (fread(&outputVirus->SigSize, sizeof(short), 1, rfile) != 1) {
+        /*fprintf(stderr, "Error reading SigSize\n");
         free(outputVirus);
-        exit(1);
-    }
+        exit(1);*/
+    } 
     if (fread(outputVirus->virusName, sizeof(char[16]), 1, rfile) != 1) {
-        fprintf(stderr, "Error reading virusName\n");
+       /* fprintf(stderr, "Error reading virusName\n");
         free(outputVirus);
-        exit(1);
+        exit(1);*/
     }
     outputVirus->sig = (unsigned char*)malloc(outputVirus->SigSize);  
     if (fread(outputVirus->sig, outputVirus->SigSize, 1, rfile) != 1) {
-        fprintf(stderr, "Error reading sig\n");
+      /*  fprintf(stderr, "Error reading sig\n");
         free(outputVirus->sig);
         free(outputVirus);
-        exit(1);
+        exit(1); */
     }
     return outputVirus;
 }
@@ -103,21 +105,45 @@ void list_free(link *virus_list) {
 }
 
 void loadSignatures() {
-    link *newLink = virus_list;
     while (!feof(file)) {
         virus *v = readVirus(file);
-        newLink = list_append(virus_list, v);
+        printf("read virus name: %s \n", v->virusName);
+        virus_list = list_append(virus_list, v);
     }
-    virus_list = newLink;
 }
 
 void printSignatures(){
     list_print(virus_list, stdout); 
 }
 
-void detectViruses() {
-    printf("Not implemented. \n");
+void detect(unsigned char *buffer, int size, link *virus_list) {
+    link *current = virus_list;
+    while(current != NULL) {
+        for(int i = 0; i < size; i++) {
+            if(memcmp(buffer+i, current->vir->sig, current->vir->SigSize) == 0) {
+                printf("Starting byte: %d \n", i);
+                printf("Virus name: %s \n", current->vir->virusName);
+                printf("Size of signature: %d \n", current->vir->SigSize);
+            }
+        }
+        current = current->nextVirus;
+    }
 }
+
+void detectViruses() { //need to change the menu to get file_name
+    printf("Enter a filename. \n");
+    char input[300];
+    fgets(input, sizeof(input), stdin);
+    input[strcspn(input, "\n")] = '\0';
+    FILE *file = fopen(input, "rb");
+    unsigned char buffer[10000];
+    unsigned int size;
+    if((size = fread(buffer, 1, 10000, file)) < 1) {
+        exit(1);
+    }
+    detect(buffer, size, virus_list);
+}
+
 
 void fixFile() {
      printf("Not implemented. \n");
@@ -143,9 +169,9 @@ void printMenu(){
 }
 
 int main(int argc, char **argv){
-   filename= "signatures-L";
+   filename = "signatures-L";
    file = fopen(filename, "rb");
-  /* char magicNumber[4];
+  char magicNumber[4];
    if (fread(magicNumber, sizeof(char), 4, file) != 4) {
         fprintf(stderr, "Error reading magic number\n");
         fclose(file);
@@ -156,7 +182,7 @@ int main(int argc, char **argv){
         fclose(file);
         exit(1);
     }
-   virus_list = (link*)malloc(sizeof(link));
+   virus_list = NULL; /*(link*)malloc(sizeof(link));*/
    char inputBuffer[100];
    int size = sizeof(menu)/sizeof(menu[0]) -1;
    printMenu();
@@ -173,7 +199,7 @@ int main(int argc, char **argv){
         }
     printMenu(); 
     } 
-} */
+} 
 
 
 
@@ -188,7 +214,7 @@ int main(int argc, char **argv){
 
 
     
-    if (file == NULL) {
+   /* if (file == NULL) {
         perror("Error opening signatures file");
         exit(1);
     }
@@ -212,5 +238,5 @@ int main(int argc, char **argv){
     fclose(file);
     return 0;
 }
-
+*/
 
