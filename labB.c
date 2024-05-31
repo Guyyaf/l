@@ -145,13 +145,13 @@ void printMenu(){
 int main(int argc, char **argv){
    filename= "signatures-L";
    file = fopen(filename, "rb");
-   char magicNumber[4];
+  /* char magicNumber[4];
    if (fread(magicNumber, sizeof(char), 4, file) != 4) {
         fprintf(stderr, "Error reading magic number\n");
         fclose(file);
         exit(1);
     } 
-    if (magicNumber[0]!='V' || magicNumber[1]!='I' || magicNumber[2]!='R' || ((magicNumber[3]!='L') && (magicNumber[4]!='B')) ) {
+    if (magicNumber[0]!='V' || magicNumber[1]!='I' || magicNumber[2]!='R' || ((magicNumber[3]!='L') && (magicNumber[3]!='B')) ) {
         fprintf(stderr, "Invalid magic number in signatures file\n");
         fclose(file);
         exit(1);
@@ -171,9 +171,9 @@ int main(int argc, char **argv){
             menu[input].fun();
             printf("DONE.\n");
         }
-    printMenu();
-    }
-}
+    printMenu(); 
+    } 
+} */
 
 
 
@@ -187,7 +187,7 @@ int main(int argc, char **argv){
 
 
 
-    /*
+    
     if (file == NULL) {
         perror("Error opening signatures file");
         exit(1);
@@ -212,4 +212,5 @@ int main(int argc, char **argv){
     fclose(file);
     return 0;
 }
-*/
+
+
