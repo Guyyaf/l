@@ -127,7 +127,7 @@ void quit() {
 
 struct fun_desc {
     char *name;
-    char (*fun)(char);
+    char (*fun)();
 };
 
 struct fun_desc menu[] = { { "Set signatures file name", SetSigFileName}, { "Load signatures", loadSignatures}, { "Print signatures", printSignatures }, { "Detect viruses", detectViruses}, { "Fix file", fixFile }, { "Quit", quit}, { NULL, NULL} };
@@ -140,13 +140,18 @@ void printMenu(){
     printf("Option: ");
 }
 
+
+//Global Variables
+ FILE *file;
+ link *virus_list;
+
 int main(int argc, char **argv){
-    FILE *file = fopen("signatures-L", "rb");
-    link *virus_list = (link*)malloc(sizeof(link));
-    char inputBuffer[100];
-    int size = sizeof(menu)/sizeof(menu[0]) -1;
-    printMenu();
-    while(fgets(inputBuffer,100,stdin)){
+   file = fopen("signatures-L", "rb");
+   virus_list = (link*)malloc(sizeof(link));
+   char inputBuffer[100];
+   int size = sizeof(menu)/sizeof(menu[0]) -1;
+   printMenu();
+   while(fgets(inputBuffer,100,stdin)){
         int input = atoi(inputBuffer);
         if(input<0 || input>=size){
             printf("Not within bounds\n");
@@ -157,7 +162,7 @@ int main(int argc, char **argv){
             virus_list = menu[input].fun();
             printf("DONE.\n");
         }
-       printMenu();
+    printMenu();
     }
 
 
