@@ -103,6 +103,7 @@ void loadSignatures() {
         virus *v = readVirus(file);
         newLink = list_append(virus_list, v);
     }
+    virus_list = newLink;
 }
 
 void printSignatures(){
