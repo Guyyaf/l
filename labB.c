@@ -106,11 +106,7 @@ void loadSignatures() {
 }
 
 void printSignatures(){
-    link *current = virus_list;
-    while(current!=NULL){
-        printVirus(current);
-        current = current->nextVirus;
-    }
+    list_print(virus_list, stdout); 
 }
 
 void detectViruses() {
