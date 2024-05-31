@@ -2,6 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+//Global Variables
+ FILE *file;
+ link *virus_list;
+ char *filename;
+ 
 typedef struct virus {
 unsigned short SigSize;
 char virusName[16];
@@ -64,11 +70,6 @@ struct link {
 link *nextVirus;
 virus *vir;
 }; 
-
-//Global Variables
- FILE *file;
- link *virus_list;
- char *filename;
 
 link* list_append(link* virus_list, virus* data) {
     link* newLink = (link*)malloc(sizeof(link));
