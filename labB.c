@@ -2,17 +2,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-//Global Variables
- FILE *file;
- link *virus_list;
- char *filename;
- 
 typedef struct virus {
 unsigned short SigSize;
 char virusName[16];
 unsigned char* sig;
 } virus;
+
+typedef struct link link;
+
+struct link {
+link *nextVirus;
+virus *vir;
+}; 
+
+//Global Variables
+ FILE *file;
+ link *virus_list;
+ char *filename;
 
 void PrintHex(unsigned char *buffer, int length){
     for (int i = 0; i < length; ++i){
@@ -63,13 +69,6 @@ void printVirus(virus* v) {
 }
 
 ////////////////////////////////////////////////////Part 1.b/////////////////////////////////////////////////////////////////////////////////////
-
-typedef struct link link;
-
-struct link {
-link *nextVirus;
-virus *vir;
-}; 
 
 link* list_append(link* virus_list, virus* data) {
     link* newLink = (link*)malloc(sizeof(link));
