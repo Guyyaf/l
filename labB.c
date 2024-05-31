@@ -18,7 +18,7 @@ virus *vir;
 //Global Variables
  FILE *file;
  link *virus_list;
- char *filename;
+ char *filename = "signatures-L";
 
 void PrintHex(unsigned char *buffer, int length){
     for (int i = 0; i < length; ++i){
