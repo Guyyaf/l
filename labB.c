@@ -38,20 +38,20 @@ void SetSigFileName() {
     filename = input;
 }
 
-virus* readVirus(FILE *file) {
+virus* readVirus(FILE *rfile) {
     virus* outputVirus = (virus*)malloc(sizeof(virus));
-    if (fread(&outputVirus->SigSize, sizeof(short), 1, file) != 1) {
+    if (fread(&outputVirus->SigSize, sizeof(short), 1, rfile) != 1) {
         fprintf(stderr, "Error reading SigSize\n");
         free(outputVirus);
         exit(1);
     }
-    if (fread(outputVirus->virusName, sizeof(char[16]), 1, file) != 1) {
+    if (fread(outputVirus->virusName, sizeof(char[16]), 1, rfile) != 1) {
         fprintf(stderr, "Error reading virusName\n");
         free(outputVirus);
         exit(1);
     }
     outputVirus->sig = (unsigned char*)malloc(outputVirus->SigSize);  
-    if (fread(outputVirus->sig, outputVirus->SigSize, 1, file) != 1) {
+    if (fread(outputVirus->sig, outputVirus->SigSize, 1, rfile) != 1) {
         fprintf(stderr, "Error reading sig\n");
         free(outputVirus->sig);
         free(outputVirus);
