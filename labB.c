@@ -103,6 +103,7 @@ link* loadSignatures(link *virus_list, FILE *file) {
         newLink = list_append(virus_list, v);
     }
     return newLink;
+}
 
 void printSignatures(link *virus_list){
     link *current = virus_list;
@@ -110,6 +111,18 @@ void printSignatures(link *virus_list){
         printVirus(current);
         current = current->nextVirus;
     }
+}
+
+void detectViruses() {
+    printf("Not implemented. \n");
+}
+
+void fixFile() {
+     printf("Not implemented. \n");
+}
+
+void quit() {
+    exit(EXIT_SUCCESS);
 }
 
 struct fun_desc {
@@ -127,10 +140,25 @@ void printMenu(){
     printf("Option: ");
 }
 
-
 int main(int argc, char **argv){
     FILE *file = fopen("signatures-L", "rb");
     link *virus_list = (link*)malloc(sizeof(link));
+    char inputBuffer[100];
+    int size = sizeof(menu)/sizeof(menu[0]) -1;
+    printMenu();
+    while(fgets(inputBuffer,100,stdin)){
+        int input = atoi(inputBuffer);
+        if(input<0 || input>=size){
+            printf("Not within bounds\n");
+            exit(1);
+        }
+        else{
+            printf("Within Bounds\n");
+            virus_list = menu[input].fun();
+            printf("DONE.\n");
+        }
+       printMenu();
+    }
 
 
 
