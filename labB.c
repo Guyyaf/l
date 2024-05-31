@@ -96,9 +96,34 @@ void list_free(link *virus_list) {
     }     
 }
 
+void printSignatures(link *virus_list){
+    link *current = virus_list;
+    while(current!=NULL){
+        printVirus(current);
+        current = current->nextVirus;
+    }
+}
+
+struct fun_desc {
+    char *name;
+    char (*fun)(char);
+};
+
+struct fun_desc menu[] = { { "Set signatures file name", SetSigFileName}, { "Load signatures", load_signatures}, { "Print signatures", printSignatures }, { "Detect viruses", detectViruses}, { "Fix file", fixFile }, { "Quit", quit}, { NULL, NULL} };
+
+void printMenu(){
+    printf("Select operation from the following menu (ctrl^D for exit):\n");
+    for(int i=0; menu[i].name!=NULL; i++){
+        printf("%d) %s\n",i,menu[i].name);
+    }
+    printf("Option: ");
+}
+
+
 int main(int argc, char **argv){
     FILE *file = fopen("signatures-L", "rb");
     link *virus_list = (link*)malloc(sizeof(link));
+
 
 
 
