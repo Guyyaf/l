@@ -106,6 +106,9 @@ void loadSignatures() {
     link *newLink = virus_list;
     while (!feof(file)) {
         virus *v = readVirus(file);
+        if (v == NULL) {
+            break; // Stop if readVirus returned NULL
+        }
         newLink = list_append(virus_list, v);
     }
     virus_list = newLink;
