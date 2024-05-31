@@ -156,7 +156,7 @@ int main(int argc, char **argv){
         }
         else{
             printf("Within Bounds\n");
-            virus_list = menu[input].fun();
+            menu[input].fun();
             printf("DONE.\n");
         }
     printMenu();
