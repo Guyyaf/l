@@ -96,6 +96,14 @@ void list_free(link *virus_list) {
     }     
 }
 
+link* loadSignatures(link *virus_list, FILE *file) {
+    link *newLink = virus_list;
+    while (!feof(file)) {
+        virus *v = readVirus(file);
+        newLink = list_append(virus_list, v);
+    }
+    return newLink;
+
 void printSignatures(link *virus_list){
     link *current = virus_list;
     while(current!=NULL){
@@ -109,7 +117,7 @@ struct fun_desc {
     char (*fun)(char);
 };
 
-struct fun_desc menu[] = { { "Set signatures file name", SetSigFileName}, { "Load signatures", load_signatures}, { "Print signatures", printSignatures }, { "Detect viruses", detectViruses}, { "Fix file", fixFile }, { "Quit", quit}, { NULL, NULL} };
+struct fun_desc menu[] = { { "Set signatures file name", SetSigFileName}, { "Load signatures", loadSignatures}, { "Print signatures", printSignatures }, { "Detect viruses", detectViruses}, { "Fix file", fixFile }, { "Quit", quit}, { NULL, NULL} };
 
 void printMenu(){
     printf("Select operation from the following menu (ctrl^D for exit):\n");
