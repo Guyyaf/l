@@ -18,7 +18,7 @@ virus *vir;
 //Global Variables
  FILE *file;
  link *virus_list;
- char *filename = "signatures-L";
+ char *filename;
 
 void PrintHex(unsigned char *buffer, int length){
     for (int i = 0; i < length; ++i){
@@ -143,7 +143,8 @@ void printMenu(){
 }
 
 int main(int argc, char **argv){
-   file = fopen("signatures-L", "rb");
+   filename= "signatures-L";
+   file = fopen(filename, "rb");
    virus_list = (link*)malloc(sizeof(link));
    char inputBuffer[100];
    int size = sizeof(menu)/sizeof(menu[0]) -1;
