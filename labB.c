@@ -65,6 +65,11 @@ link *nextVirus;
 virus *vir;
 }; 
 
+//Global Variables
+ FILE *file;
+ link *virus_list;
+ char *filename;
+
 link* list_append(link* virus_list, virus* data) {
     link* newLink = (link*)malloc(sizeof(link));
     newLink->vir = data;
@@ -137,12 +142,6 @@ void printMenu(){
     printf("Option: ");
 }
 
-
-//Global Variables
- FILE *file;
- link *virus_list;
- char *filename;
-
 int main(int argc, char **argv){
    file = fopen("signatures-L", "rb");
    virus_list = (link*)malloc(sizeof(link));
@@ -162,6 +161,7 @@ int main(int argc, char **argv){
         }
     printMenu();
     }
+}
 
 
 
@@ -175,7 +175,7 @@ int main(int argc, char **argv){
 
 
 
-    ////////////////////////////////////////////////
+    /*
     if (file == NULL) {
         perror("Error opening signatures file");
         exit(1);
@@ -200,3 +200,4 @@ int main(int argc, char **argv){
     fclose(file);
     return 0;
 }
+*/
