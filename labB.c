@@ -98,6 +98,20 @@ void list_free(link *virus_list) {
 
 int main(int argc, char **argv){
     FILE *file = fopen("signatures-L", "rb");
+    link *virus_list = (link*)malloc(sizeof(link));
+
+
+
+
+
+
+
+
+
+
+
+
+    ////////////////////////////////////////////////
     if (file == NULL) {
         perror("Error opening signatures file");
         exit(1);
