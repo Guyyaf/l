@@ -37,7 +37,7 @@ void SetSigFileName() {
     if(rename(filename,  input) != 0){
         exit(1);
     }
-    filename = input; 
+    filename = strdup(input); 
 }
 
 virus* readVirus(FILE *rfile) {
@@ -169,7 +169,7 @@ void printMenu(){
 }
 
 int main(int argc, char **argv){
-   filename = "signatures-L";
+   filename = strdup("signatures-L");
    file = fopen(filename, "rb");
   char magicNumber[4];
    if (fread(magicNumber, sizeof(char), 4, file) != 4) {
@@ -182,7 +182,7 @@ int main(int argc, char **argv){
         fclose(file);
         exit(1);
     }
-   virus_list = NULL; /*(link*)malloc(sizeof(link));*/
+   virus_list = NULL;
    char inputBuffer[100];
    int size = sizeof(menu)/sizeof(menu[0]) -1;
    printMenu();
