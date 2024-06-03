@@ -140,33 +140,6 @@ void detect(unsigned char *buffer, int size, link *virus_list) {
     }
 }
 
-int detect2(unsigned char *buffer, int size, link *virus_list) {
-    link *current = virus_list;
-    while(current != NULL) {
-        for(int i = 0; i < size; i++) {
-            if(memcmp(buffer+i, current->vir->sig, current->vir->SigSize) == 0) {
-                return i;
-            }
-        }
-        current = current->nextVirus;
-    }
-    return -1;
-}
-
-void detectViruses() { //need to change the menu to get file_name
-    printf("Enter a filename. \n");
-    char input[300];
-    fgets(input, sizeof(input), stdin);
-    input[strcspn(input, "\n")] = '\0';
-    FILE *file = fopen(input, "rb");
-    unsigned char buffer[10000];
-    unsigned int size;
-    if((size = fread(buffer, 1, 10000, file)) < 1) {
-        exit(1);
-    }
-    detect(buffer, size, virus_list);
-}
-
 void neutralize_virus(char *fileName, int signatureOffset) {
     FILE *userfile = fopen(fileName, "r+b"); 
     if (userfile == NULL) {
@@ -184,6 +157,32 @@ void neutralize_virus(char *fileName, int signatureOffset) {
     fclose(userfile);
 }
 
+void detect2(unsigned char *buffer, int size, link *virus_list, char *filename) {
+    link *current = virus_list;
+    while(current != NULL) {
+        for(int i = 0; i < size; i++) {
+            if(memcmp(buffer+i, current->vir->sig, current->vir->SigSize) == 0) {
+                neutralize_virus(filename, i);
+            }
+        }
+        current = current->nextVirus;
+    }
+}
+
+void detectViruses() { //need to change the menu to get file_name
+    printf("Enter a filename. \n");
+    char input[300];
+    fgets(input, sizeof(input), stdin);
+    input[strcspn(input, "\n")] = '\0';
+    FILE *file = fopen(input, "rb");
+    unsigned char buffer[10000];
+    unsigned int size;
+    if((size = fread(buffer, 1, 10000, file)) < 1) {
+        exit(1);
+    }
+    detect(buffer, size, virus_list);
+}
+
 void fixFile() {
     printf("Enter a filename. \n");
     char input[300];
@@ -195,10 +194,8 @@ void fixFile() {
     if((size = fread(buffer, 1, 10000, userFile)) < 1) {
         exit(1);
     };
-    int indexOfVirus =  detect2(buffer, size, virus_list);
-    if(indexOfVirus!=-1){
-        neutralize_virus(input, indexOfVirus);
-    }
+    detect2(buffer, size, virus_list, input);
+    fclose(userFile);
 }
 
 void quit() {
