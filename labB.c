@@ -42,22 +42,31 @@ void SetSigFileName() {
 
 virus* readVirus(FILE *rfile) {
     virus* outputVirus = (virus*)malloc(sizeof(virus));
-   if (fread(&outputVirus->SigSize, sizeof(short), 1, rfile) != 1) {
-        /*fprintf(stderr, "Error reading SigSize\n");
+    if (fread(outputVirus, 1, 18, file) != 18) {
         free(outputVirus);
-        exit(1);*/
+        return NULL;
+    }
+    if(fseek(file, -18, SEEK_CUR) != 0) {
+        perror("fseek failed");
+        fclose(file);
+        exit(1);
+    }
+   if (fread(&outputVirus->SigSize, sizeof(short), 1, rfile) != 1) {
+        fprintf(stderr, "Error reading SigSize\n");
+        free(outputVirus);
+        exit(1);
     } 
     if (fread(outputVirus->virusName, sizeof(char[16]), 1, rfile) != 1) {
-       /* fprintf(stderr, "Error reading virusName\n");
+       fprintf(stderr, "Error reading virusName\n");
         free(outputVirus);
-        exit(1);*/
+        exit(1);
     }
     outputVirus->sig = (unsigned char*)malloc(outputVirus->SigSize);  
     if (fread(outputVirus->sig, outputVirus->SigSize, 1, rfile) != 1) {
-      /*  fprintf(stderr, "Error reading sig\n");
+       fprintf(stderr, "Error reading sig\n");
         free(outputVirus->sig);
         free(outputVirus);
-        exit(1); */
+        exit(1); 
     }
     return outputVirus;
 }
@@ -107,8 +116,9 @@ void list_free(link *virus_list) {
 void loadSignatures() {
     while (!feof(file)) {
         virus *v = readVirus(file);
-        printf("read virus name: %s \n", v->virusName);
-        virus_list = list_append(virus_list, v);
+        if(v!=NULL){
+            virus_list = list_append(virus_list, v);
+        }
     }
 }
 
@@ -130,6 +140,19 @@ void detect(unsigned char *buffer, int size, link *virus_list) {
     }
 }
 
+int detect2(unsigned char *buffer, int size, link *virus_list) {
+    link *current = virus_list;
+    while(current != NULL) {
+        for(int i = 0; i < size; i++) {
+            if(memcmp(buffer+i, current->vir->sig, current->vir->SigSize) == 0) {
+                return i;
+            }
+        }
+        current = current->nextVirus;
+    }
+    return -1;
+}
+
 void detectViruses() { //need to change the menu to get file_name
     printf("Enter a filename. \n");
     char input[300];
@@ -144,9 +167,38 @@ void detectViruses() { //need to change the menu to get file_name
     detect(buffer, size, virus_list);
 }
 
+void neutralize_virus(char *fileName, int signatureOffset) {
+    FILE *userfile = fopen(fileName, "r+b"); 
+    if (userfile == NULL) {
+        perror("Failed to open file");
+        return;
+    }
+    fseek(userfile, signatureOffset, 0);
+    unsigned char ret = 0xC3;
+    if (fwrite(&ret, sizeof(unsigned char), 1, userfile) != 1) {
+        perror("fwrite failed");
+        fclose(userfile);
+        return;
+    }
+    printf("Virus at offset %d neutralized.\n", signatureOffset);
+    fclose(userfile);
+}
 
 void fixFile() {
-     printf("Not implemented. \n");
+    printf("Enter a filename. \n");
+    char input[300];
+    fgets(input, sizeof(input), stdin);
+    input[strcspn(input, "\n")] = '\0';
+    FILE *userFile = fopen(input, "rb");
+    unsigned char buffer[10000];
+    unsigned int size;
+    if((size = fread(buffer, 1, 10000, userFile)) < 1) {
+        exit(1);
+    };
+    int indexOfVirus =  detect2(buffer, size, virus_list);
+    if(indexOfVirus!=-1){
+        neutralize_virus(input, indexOfVirus);
+    }
 }
 
 void quit() {
