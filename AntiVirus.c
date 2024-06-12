@@ -21,6 +21,7 @@ virus *vir;
  link *virus_list;
  char *filename;
  char *userFileName;
+ int isBigEndian;
 
 void PrintHex(unsigned char *buffer, int length){
     for (int i = 0; i < length; ++i){
@@ -52,6 +53,7 @@ virus* readVirus(FILE *rfile) {
         fclose(file);
         exit(1);
     }
+
    if (fread(&outputVirus->SigSize, sizeof(short), 1, rfile) != 1) {
         fprintf(stderr, "Error reading SigSize\n");
         free(outputVirus);
@@ -61,6 +63,9 @@ virus* readVirus(FILE *rfile) {
        fprintf(stderr, "Error reading virusName\n");
         free(outputVirus);
         exit(1);
+    }
+    if(isBigEndian) {
+        outputVirus->SigSize = (outputVirus->SigSize >> 8) | (outputVirus->SigSize << 8);
     }
     outputVirus->sig = (unsigned char*)malloc(outputVirus->SigSize);  
     if (fread(outputVirus->sig, outputVirus->SigSize, 1, rfile) != 1) {
@@ -211,7 +216,7 @@ void printMenu(){
 }
 
 int main(int argc, char **argv){
-   filename = strdup("signatures-L");
+   filename = strdup("signatures-B");
    file = fopen(filename, "rb");
    userFileName = argv[1];
   char magicNumber[4];
@@ -224,6 +229,12 @@ int main(int argc, char **argv){
         fprintf(stderr, "Invalid magic number in signatures file\n");
         fclose(file);
         exit(1);
+    }
+    if(magicNumber[3]=='L') {
+        isBigEndian = 0;
+    }
+    else {
+        isBigEndian = 1;
     }
    virus_list = NULL;
    char inputBuffer[100];
