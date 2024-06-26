@@ -216,7 +216,7 @@ void printMenu(){
 }
 
 int main(int argc, char **argv){
-   filename = strdup("signatures-B");
+   filename = strdup("signatures-L");
    file = fopen(filename, "rb");
    userFileName = argv[1];
   char magicNumber[4];
